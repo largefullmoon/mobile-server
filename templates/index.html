@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard Control</title>
+    <style>
+        /* Navigation Bar */
+
+        #scoreboard-content {
+            padding-top: 550px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            background-color: #e0e0e0;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            height: 80px;
+        }
+
+        .nav a {
+            background-color: #ffffff;
+            color: #333;
+            margin: 0 10px;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+        }
+
+        .nav button {
+            height: 70px;
+        }
+
+        .nav a:hover {
+            background-color: #ddd;
+        }
+
+        /* Content Area */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 60px);
+            margin-top: 10px;
+            width: 90%;
+            margin: auto;
+            padding-top: 50px;
+
+        }
+
+        .containerr {
+            display: flex;
+            justify-content: left;
+            align-items: left;
+            width: 90%;
+            margin: auto;
+
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+            }
+        }
+
+        .content {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+        #settings-content {
+            padding-top: 10px;
+        }
+
+        #newgame-content {
+            padding: 20px;
+            margin-top: 300px;
+            font-weight: bold;
+            /* Make all text bold */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            /* Make text bold */
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 50%;
+            font-weight: bold;
+            /* Make text bold */
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            font-weight: bold;
+            /* Make text bold */
+        }
+
+        button {
+            padding: 10px;
+            margin: 10px;
+            font-weight: bold;
+            /* Make text bold */
+        }
+
+        .team-picture-frame {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 400px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .team-picture-preview {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        #save-btn,
+        #cancel-btn {
+            padding: 10px;
+            width: 100px;
+            margin: 20px;
+            font-weight: bold;
+            /* Make text bold */
+        }
+
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            color: #333;
+        }
+
+        .tab-button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .button-group-left {
+            margin-right: 10px;
+        }
+
+        .button-group-right {
+            margin-left: 10px;
+        }
+
+        .button-group-center {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            max-width: 200px;
+            box-sizing: border-box;
+        }
+
+        button:active {
+            background-color: #0056b3;
+        }
+
+        .clock-controls {
+            display: flex;
+            justify-content: center;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .color-preview button {
+            position: relative;
+            right: 60px;
+        }
+
+        .color-previeww {
+            position: relative;
+            padding-left: 150px;
+
+        }
+
+        .color-previeww button {
+            padding-left: 35px;
+        }
+
+        .input-group input,
+        .input-group .spinbox {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .input-group button {
+            margin-top: 10px;
+            padding-right: 20px;
+        }
+
+        .input-group .time-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group .time-input input {
+            width: 60px;
+            text-align: center;
+        }
+
+        .input-group .time-input span {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .spinbox {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .spinbox::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .spinbox::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .color-settings {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .color-settings .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .color-settings .input-group label {
+            margin: 0;
+            font-weight: normal;
+            flex: 1;
+        }
+
+        .color-settings .input-group input {
+            height: 30px;
+            font-size: 14px;
+            width: 100px;
+        }
+
+        .color-settings .color-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-settings .color-box {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            background-color: #000000;
+        }
+
+
+        .color-settings .color-preview button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .color-settings .color-preview button:active {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .button-group {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .button-group-left,
+            .button-group-right {
+                margin: 0;
+                flex: 1;
+
+
+
+
+            }
+
+            #reset_all_colors {
+                margin-left: 600px;
+                object-position: right;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <a href="#" id="scoreboard-link">Scoreboard Control</a>
+        <a href="#" id="settings-link">Settings</a>
+        <a href="#" id="newgame-link">New Game</a>
+        <br><br>
+
+
+
+    </div>
+    <div class="container">
+        <div class="content" id="scoreboard-content">
+            <h2>Scoreboard Control</h2>
+            <div class="section">
+                <h3>Home Goals</h3>
+                <div class="button-container">
+                    <div class="button-group button-group-left">
+                        <button id="home_point_plus">+1 Point</button>
+                        <button id="home_point_minus">-1 Point</button>
+                    </div>
+                    <div class="button-group button-group-right">
+                        <button id="home_goal_plus">+1 Goal</button>
+                        <button id="home_goal_minus">-1 Goal</button>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>Visitor Goals</h3>
+                <div class="button-container">
+                    <div class="button-group button-group-left">
+                        <button id="visitor_point_plus">+1 Point</button>
+                        <button id="visitor_point_minus">-1 Point</button>
+                    </div>
+                    <div class="button-group button-group-right">
+                        <button id="visitor_goal_plus">+1 Goal</button>
+                        <button id="visitor_goal_minus">-1 Goal</button>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>Half</h3>
+                <div class="button-container">
+                    <div class="button-group button-group-center">
+                        <button id="half_plus">+1 Half</button>
+                        <button id="half_minus">-1 Half</button>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>Clock</h3>
+                <div class="clock-controls">
+                    <button id="period_time_start_stop">Start/Stop</button>
+                </div>
+                <br>
+                <div class="clock-controls">
+
+                </div>
+            </div>
+        </div>
+        <div class="content" id="settings-content" style="display: none;">
+            <h2>Settings</h2>
+            <div class="tabs">
+                <button class="tab-button active" data-target="scoreboard-settings">Scoreboard Settings</button>
+                <button class="tab-button" data-target="color-settings">Color Settings</button>
+            </div>
+            <div id="scoreboard-settings" class="tab-content active">
+                <h3>Scoreboard Settings</h3>
+                <div class="input-group">
+                    <label for="home-team-name">Home Team Name</label>
+                    <input type="text" id="home-team-name">
+                </div>
+                <div class="input-group">
+                    <label for="visitor-team-name">Visitor Team Name</label>
+                    <input type="text" id="visitor-team-name">
+                </div>
+                <div class="input-group">
+                    <label for="period-time">Period Time</label>
+                    <div class="time-input">
+                        <input type="number" id="period-hours" class="spinbox" min="0" max="23" value="00"
+                            placeholder="00">
+                        <span>:</span>
+                        <input type="number" id="period-minutes" class="spinbox" min="0" max="59" value="00"
+                            placeholder="00">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <button id="save-settings">Save</button>
+                    <button id="reset_clockbutton">Reset Timer</button>
+
+                </div>
+            </div>
+            <div id="color-settings" class="tab-content">
+                <h3>Color Settings</h3>
+                <div class="color-settings">
+                    <div class="input-group">
+                        <label for="background-color">Background Color</label>
+                        <div class="color-preview">
+                            <button type="button" id="save_bg_color">Save</button>
+                            <div id="background-color-box" class="color-box"></div>
+                            <input type="color" id="background-color">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="game-name-color">Game Name Color</label>
+                        <div class="color-preview">
+                            <button type="button" id="save_gamename_color">Save</button>
+                            <div id="game-name-color-box" class="color-box"></div>
+                            <input type="color" id="game-name-color">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="home-team-color">Home Team Name Color</label>
+                        <div class="color-preview">
+                            <button type="button" id="save_hometeam_color">Save</button>
+                            <div id="home-team-color-box" class="color-box"></div>
+                            <input type="color" id="home-team-color">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="visitor-team-color">Visitor Team Name Color</label>
+                        <div class="color-preview">
+                            <button type="button" id="save_visitorteam_color">Save</button>
+                            <div id="visitor-team-color-box" class="color-box"></div>
+                            <input type="color" id="visitor-team-color">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="score-color">Score Color</label>
+                        <div class="color-preview">
+                            <button type="button" id="save_score_color">Save</button>
+                            <div id="score-color-box" class="color-box"></div>
+                            <input type="color" id="score-color">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="time-of-day-color">Time of the Day Color</label>
+                        <div class="color-preview">
+                            <button type="button" id="save_timeoftheday_color">Save</button>
+                            <div id="time-of-day-color-box" class="color-box"></div>
+                            <input type="color" id="time-of-day-color">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="period-time-color">Period Time Color</label>
+                        <div class="color-preview">
+                            <button type="button" id="save_periodtime_color">Save</button>
+                            <div id="period-time-color-box" class="color-box"></div>
+                            <input type="color" id="period-time-color">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="running-time-color">Running Time Color</label>
+                        <div class="color-preview">
+                            <button type="button" id="save_runningtime_color">Save</button>
+                            <div id="running-time-color-box" class="color-box"></div>
+                            <input type="color" id="running-time-color">
+                        </div>
+                    </div>
+                    <div class="containerr">
+
+                        <div class="input-group">
+                            <label for="running-time-color">Reset Colors</label>
+                            <div class="color-previeww">
+                                <button type="button" id="reset_all_colors">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="content" id="newgame-content" style="display: none;">
+            <div>
+                <label for="game-name">Game Name:</label>
+                <input type="text" id="game-name-input" name="game_name" placeholder="Enter game name">
+                <br> <br><br>
+
+                <div class="section">
+                    <label for="home-team-name">Home Team Name:</label>
+                    <input type="text" id="home-team-name-input" name="home_team_name"
+                        placeholder="Enter home team name">
+                    <br><br>
+                </div>
+                <div class="section">
+                    <label for="visitor-team-name">Visitor Team Name:</label>
+                    <input type="text" id="visitor-team-name-input" name="visitor_team_name"
+                        placeholder="Enter visitor team name">
+                    <br><br>
+                </div>
+                <button id="save-btn" onclick="startNewGame()">Save</button>
+            </div>
+
+        </div>
+
+
+
+
+
+
+    </div>
+
+    <script>
+
+        function startNewGame() {
+            const gameName = document.getElementById('game-name-input');
+            const homeTeamName = document.getElementById('home-team-name-input');
+            const visitorTeamName = document.getElementById('visitor-team-name-input');
+            fetch(`/startNewGame`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    game_name: gameName.value,
+                    home_team_name: homeTeamName.value,
+                    visitor_team_name: visitorTeamName.value
+                })
+            })
+            .then(response => response.text())
+            .then(text => console.log(text))
+            .catch(error => console.error('Error:', error));
+        }
+        function sendTwoAction(action, data) {
+            fetch(`/control?action=${action}&data=${encodeURIComponent(data)}`)
+                .then(response => response.text())
+                .then(text => console.log(text))
+                .catch(error => console.error('Error:', error));
+        }
+
+        function sendAction(action) {
+            fetch(`/control?action=${action}`)
+                .then(response => response.text())
+                .then(text => console.log(text))
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('home_goal_plus').addEventListener('click', () => {
+            sendAction('goal_plus');
+        });
+
+        document.getElementById('home_goal_minus').addEventListener('click', () => {
+            sendAction('goal_minus');
+        });
+
+        // Update point
+        document.getElementById('home_point_plus').addEventListener('click', () => {
+            sendAction('point_plus');
+        });
+
+        document.getElementById('home_point_minus').addEventListener('click', () => {
+            sendAction('point_minus');
+        });
+
+        // Update visitor score
+        document.getElementById('visitor_goal_plus').addEventListener('click', () => {
+            sendAction('visitor_goal_plus');
+        });
+        document.getElementById('visitor_goal_minus').addEventListener('click', () => {
+            sendAction('visitor_goal_minus');
+        });
+
+        // Update visitor point
+        document.getElementById('visitor_point_plus').addEventListener('click', () => {
+            sendAction('visitor_point_plus');
+        });
+
+        document.getElementById('visitor_point_minus').addEventListener('click', () => {
+            sendAction('visitor_point_minus');
+        });
+        document.getElementById('reset_all_colors').addEventListener('click', () => {
+            sendAction('reset_all_colors');
+        });
+
+        // Update half
+        document.getElementById('half_plus').addEventListener('click', () => {
+            sendAction('half_plus');
+        });
+
+        document.getElementById('half_minus').addEventListener('click', () => {
+            sendAction('half_minus');
+        });
+
+        // Start/Stop
+        document.getElementById('period_time_start_stop').addEventListener('click', () => {
+            sendAction('period_time_start_stop');
+        });
+
+        document.getElementById('reset_clockbutton').addEventListener('click', () => {
+            sendAction('reset_clockbutton');
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        document.getElementById('scoreboard-link').addEventListener('click', function () {
+            document.getElementById('scoreboard-content').style.display = 'block';
+            document.getElementById('settings-content').style.display = 'none';
+            document.getElementById('scoreboard-link').classList.add('active');
+            document.getElementById('settings-link').classList.remove('active');
+        });
+
+        document.getElementById('settings-link').addEventListener('click', function () {
+            document.getElementById('scoreboard-content').style.display = 'none';
+            document.getElementById('settings-content').style.display = 'block';
+            document.getElementById('settings-link').classList.add('active');
+            document.getElementById('scoreboard-link').classList.remove('active');
+        });
+
+        // Tab switching in Settings
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-target');
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        document.getElementById('save-settings').addEventListener('click', function () {
+            const homeTeamName = document.getElementById('home-team-name').value;
+            const visitorTeamName = document.getElementById('visitor-team-name').value;
+            const periodHours = document.getElementById('period-hours').value;
+            const periodMinutes = document.getElementById('period-minutes').value;
+
+            sendTwoAction('updateHomeTeamName', homeTeamName);
+            sendTwoAction('updateVisitorTeamName', visitorTeamName);
+            sendTwoAction('updatePeriodHours', periodHours);
+            sendTwoAction('updatePeriodMinutes', periodMinutes);
+
+
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        document.getElementById('save_bg_color').addEventListener('click', function () {
+            const backgroundColor = document.getElementById('background-color').value;
+            document.getElementById('background-color-box').style.backgroundColor = backgroundColor;
+            sendTwoAction('background-color-box', backgroundColor);
+        });
+        document.getElementById('save_gamename_color').addEventListener('click', function () {
+            const gameNameColor = document.getElementById('game-name-color').value;
+            document.getElementById('game-name-color-box').style.backgroundColor = gameNameColor;
+            sendTwoAction('game-name-color-box', gameNameColor);
+        });
+        document.getElementById('save_hometeam_color').addEventListener('click', function () {
+            const homeTeamColor = document.getElementById('home-team-color').value;
+            document.getElementById('home-team-color-box').style.backgroundColor = homeTeamColor;
+            sendTwoAction('home-team-color-box', homeTeamColor);
+        });
+        document.getElementById('save_visitorteam_color').addEventListener('click', function () {
+            const visitorTeamColor = document.getElementById('visitor-team-color').value;
+            document.getElementById('visitor-team-color-box').style.backgroundColor = visitorTeamColor;
+            sendTwoAction('visitor-team-color-box', visitorTeamColor);
+        });
+        document.getElementById('save_score_color').addEventListener('click', function () {
+            const scoreColor = document.getElementById('score-color').value;
+            document.getElementById('score-color-box').style.backgroundColor = scoreColor;
+            sendTwoAction('score-color-box', scoreColor);
+        });
+        document.getElementById('save_timeoftheday_color').addEventListener('click', function () {
+            const timeOfDayColor = document.getElementById('time-of-day-color').value;
+            document.getElementById('time-of-day-color-box').style.backgroundColor = timeOfDayColor;
+            sendTwoAction('time-of-day-color-box', timeOfDayColor);
+        });
+        document.getElementById('save_periodtime_color').addEventListener('click', function () {
+            const periodTimeColor = document.getElementById('period-time-color').value;
+            document.getElementById('period-time-color-box').style.backgroundColor = periodTimeColor;
+            sendTwoAction('period-time-color-box', periodTimeColor);
+        });
+        document.getElementById('save_runningtime_color').addEventListener('click', function () {
+            const runningTimeColor = document.getElementById('running-time-color').value;
+            document.getElementById('running-time-color-box').style.backgroundColor = runningTimeColor;
+            sendTwoAction('running-time-color-box', runningTimeColor);
+        });
+
+
+        const initialColors = {};
+
+        // Initialize color inputs and set initial values
+        document.querySelectorAll('.input-group input[type="color"]').forEach(colorInput => {
+            // Store the initial color value
+            const initialColor = colorInput.defaultValue; // Use defaultValue instead of value
+            initialColors[colorInput.id] = initialColor;
+
+            // Set the initial color box color
+            const boxId = colorInput.id.replace('-color', '-color-box');
+            document.getElementById(boxId).style.backgroundColor = initialColor;
+
+            // Add event listener for color input change
+            colorInput.addEventListener('input', function () {
+                const boxId = this.id.replace('-color', '-color-box');
+                const newColor = this.value;
+
+                // Update the color box with the new color
+                document.getElementById(boxId).style.backgroundColor = newColor;
+            });
+        });
+
+        // Function to handle save action
+        function saveColorSettings() {
+            document.querySelectorAll('.input-group input[type="color"]').forEach(colorInput => {
+                const boxId = colorInput.id.replace('-color', '-color-box');
+                const newColor = colorInput.value;
+
+                if (newColor) {
+                    // If the input has a new color, update the color box
+                    document.getElementById(boxId).style.backgroundColor = newColor;
+                }
+                // Remove the else clause to prevent resetting unselected colors
+            });
+        }
+        // Ensure only numeric input in spinboxes
+        document.querySelectorAll('.spinbox').forEach(spinbox => {
+            spinbox.addEventListener('input', function (e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+        document.getElementById('newgame-link').addEventListener('click', function () {
+
+            document.getElementById('scoreboard-content').style.display = 'none';
+
+            document.getElementById('settings-content').style.display = 'none';
+
+            document.getElementById('newgame-content').style.display = 'block';
+
+            document.getElementById('newgame-link').classList.add('active');
+
+            document.getElementById('scoreboard-link').classList.remove('active');
+
+            document.getElementById('settings-link').classList.remove('active');
+
+        });
+
+
+        document.getElementById('scoreboard-link').addEventListener('click', function () {
+
+            document.getElementById('scoreboard-content').style.display = 'block';
+
+            document.getElementById('settings-content').style.display = 'none';
+
+            document.getElementById('newgame-content').style.display = 'none';
+
+            document.getElementById('scoreboard-link').classList.add('active');
+
+            document.getElementById('settings-link').classList.remove('active');
+
+            document.getElementById('newgame-link').classList.remove('active');
+
+        });
+
+
+        document.getElementById('settings-link').addEventListener('click', function () {
+
+            document.getElementById('scoreboard-content').style.display = 'none';
+
+            document.getElementById('settings-content').style.display = 'block';
+
+            document.getElementById('newgame-content').style.display = 'none';
+
+            document.getElementById('settings-link').classList.add('active');
+
+            document.getElementById('scoreboard-link').classList.remove('active');
+
+            document.getElementById('newgame-link').classList.remove('active');
+
+        });
+    </script>
+</body>
+
+</html>
