@@ -118,6 +118,30 @@ def control():
 @app.route('/startNewGame', methods=['POST'])
 def startNewGame():
     data = request.json
+    settingData = {
+    "home_team_score": 0,
+    "visitor_team_score": 0,
+    "home_team_score_2": 0,
+    "visitor_team_score_2": 0,
+    "totalscore_hometeam": 0,
+    "totalscore_visitorteam": 0,
+    "period_time_start_stop": False,
+    "half":1,
+    "game_name":"Game",
+    "home_team_name":"Home Team",
+    "visitor_team_name":"Opposition Team",
+    "running_time":0,
+    "period_time_minute":0,
+    "period_time_second":0,
+    "period_time_total":0,
+    "background_color":"black",
+    "gamename_color":"yellow",
+    "hometeamname_color":"lightblue",
+    "visitorteamname_color":"lightblue",
+    "scores_color":"yellow",
+    "timeofday_color":"red",
+    "runningtime_color":"yellow",
+}
     settingData['game_name'] = data["game_name"]
     settingData['home_team_name'] = data["home_team_name"]
     settingData['visitor_team_name'] = data["visitor_team_name"]
