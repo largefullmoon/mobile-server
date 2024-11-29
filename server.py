@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request, render_template
 from flask_socketio import SocketIO, emit
-
-
+import time
+import threading
+timer_thread = None
 app = Flask(__name__)
 socketio = SocketIO(app)
 settingData = {
@@ -71,8 +72,16 @@ def control():
             settingData['visitor_team_score'] -= 1
             settingData['totalscore_visitorteam'] -= 3
     if action == "period_time_start_stop":
+        global timer_thread
         settingData['period_time_start_stop'] = not settingData['period_time_start_stop']
-        sendTime()
+        
+        if settingData['period_time_start_stop']:
+            # Start the timer
+            timer_thread = threading.Thread(target=run_timer)
+            timer_thread.start()
+        else:
+            # Stop the timer
+            settingData['period_time_start_stop'] = False
     if action == "half_plus":
         settingData['half'] += 1
     if action == "half_minus":
@@ -135,14 +144,21 @@ def savePeriodTime():
     socketio.emit('time', {'time': settingData['period_time_total']})
     socketio.emit('settings', settingData)
     return jsonify({'message': 'Saved successfully!'})
-def sendTime():
-    totalSecond = settingData['period_time_total']
-    while totalSecond > 0 and settingData['period_time_start_stop']:
-        totalSecond -= 1
+def run_timer():
+    global settingData
+    while settingData['period_time_start_stop'] and settingData['period_time_total'] > 0:
+        send_time()
+        time.sleep(1)
+
+def send_time():
+    global settingData
+    total_second = settingData['period_time_total']
+    if total_second > 0:
         settingData['period_time_total'] -= 1
-        print(totalSecond)
-        socketio.emit('time', {'time': totalSecond})  # Send time to frontend
-        socketio.sleep(1)  # Wait for 1 second
+        print(total_second)
+        socketio.emit('time', {'time': total_second})  # Send time to frontend
+    else:
+        settingData['period_time_start_stop'] = False  # Stop when it reaches 0
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
