@@ -161,4 +161,4 @@ def send_time():
         settingData['period_time_start_stop'] = False  # Stop when it reaches 0
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=2323)
