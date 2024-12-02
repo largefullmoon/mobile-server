@@ -83,10 +83,13 @@ def control():
             # Stop the timer
             settingData['period_time_start_stop'] = False
     if action == "half_plus":
-        settingData['half'] += 1
+        if settingData['half'] < 2:
+            settingData['half'] += 1
+            settingData['period_time_total'] = (int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60)/2
     if action == "half_minus":
-        if settingData['half']>1:
+        if settingData['half'] > 1:
             settingData['half'] -= 1
+            settingData['period_time_total'] = 0
     if action == "game-name-color-box":
         settingData['gamename_color'] = request.args.get('data')
     if action == "home-team-color-box":
@@ -102,46 +105,71 @@ def control():
     if action == "background-color-box":
         settingData['background_color'] = request.args.get('data')
     if action == "updateVisitorTeamName":
-        settingData['visitor_team_name'] = request.args.get('data')
+        if request.args.get('data') != "":
+            settingData['visitor_team_name'] = request.args.get('data')
     if action == "updateHomeTeamName":
-        settingData['home_team_name'] = request.args.get('data')
+        if request.args.get('data') != "":
+            settingData['home_team_name'] = request.args.get('data')
     if action == "updatePeriodHours":
-        settingData['period_time_minute'] = request.args.get('data')
+        if request.args.get('data') != "":
+            settingData['period_time_minute'] = request.args.get('data')
+        settingData['period_time_total'] = int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60
+        socketio.emit('time', {'time': settingData['period_time_total']})
     if action == "updatePeriodMinutes":
-        settingData['period_time_second'] = request.args.get('data')
+        if request.args.get('data') != "":
+            settingData['period_time_second'] = request.args.get('data')
         settingData['period_time_total'] = int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60
         socketio.emit('time', {'time': settingData['period_time_total']})
     socketio.emit('settings', settingData)
     print(action, "action")
     return jsonify({'action': action})
 
+@app.route('/newBoard', methods=['POST'])
+def newBoard():
+    global settingData
+    settingData["home_team_score"] = 0
+    settingData["visitor_team_score"] = 0
+    settingData["home_team_score_2"] = 0
+    settingData["visitor_team_score_2"] = 0
+    settingData["totalscore_hometeam"] = 0
+    settingData["totalscore_visitorteam"] = 0
+    settingData["period_time_start_stop"] = False
+    settingData["half"] = 1
+    settingData["running_time"] = 0
+    settingData["period_time_minute"] = 0
+    settingData["period_time_second"] = 0
+    settingData["period_time_total"] = 0
+    
+    return jsonify({'action': "new board"})
+
 @app.route('/startNewGame', methods=['POST'])
 def startNewGame():
+    global settingData
     data = request.json
     settingData = {
-    "home_team_score": 0,
-    "visitor_team_score": 0,
-    "home_team_score_2": 0,
-    "visitor_team_score_2": 0,
-    "totalscore_hometeam": 0,
-    "totalscore_visitorteam": 0,
-    "period_time_start_stop": False,
-    "half":1,
-    "game_name":"Game",
-    "home_team_name":"Home Team",
-    "visitor_team_name":"Opposition Team",
-    "running_time":0,
-    "period_time_minute":0,
-    "period_time_second":0,
-    "period_time_total":0,
-    "background_color":"black",
-    "gamename_color":"yellow",
-    "hometeamname_color":"lightblue",
-    "visitorteamname_color":"lightblue",
-    "scores_color":"yellow",
-    "timeofday_color":"red",
-    "runningtime_color":"yellow",
-}
+        "home_team_score": 0,
+        "visitor_team_score": 0,
+        "home_team_score_2": 0,
+        "visitor_team_score_2": 0,
+        "totalscore_hometeam": 0,
+        "totalscore_visitorteam": 0,
+        "period_time_start_stop": False,
+        "half":1,
+        "game_name":"Game",
+        "home_team_name":"Home Team",
+        "visitor_team_name":"Opposition Team",
+        "running_time":0,
+        "period_time_minute":0,
+        "period_time_second":0,
+        "period_time_total":0,
+        "background_color":"black",
+        "gamename_color":"yellow",
+        "hometeamname_color":"lightblue",
+        "visitorteamname_color":"lightblue",
+        "scores_color":"yellow",
+        "timeofday_color":"red",
+        "runningtime_color":"yellow",
+    }
     settingData['game_name'] = data["game_name"]
     settingData['home_team_name'] = data["home_team_name"]
     settingData['visitor_team_name'] = data["visitor_team_name"]
@@ -179,7 +207,8 @@ def send_time():
     total_second = settingData['period_time_total']
     if total_second > 0:
         settingData['period_time_total'] -= 1
-        print(total_second)
+        if settingData['period_time_total'] == (int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60)/2:
+            settingData['half'] = 2
         socketio.emit('time', {'time': total_second})  # Send time to frontend
     else:
         settingData['period_time_start_stop'] = False  # Stop when it reaches 0
