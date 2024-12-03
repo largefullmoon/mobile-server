@@ -85,8 +85,8 @@ def control():
     if action == "half_plus":
         if settingData['half'] < 2:
             settingData['half'] += 1
-            settingData['period_time_total'] = int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60
-            socketio.emit('time', {'time': settingData['period_time_total']/2})
+            settingData['period_time_total'] = 0
+            socketio.emit('time', {'time': 0})
     if action == "half_minus":
         if settingData['half'] > 1:
             settingData['half'] -= 1
@@ -208,11 +208,11 @@ def send_time():
     global settingData
     total_second = settingData['period_time_total']
     settingData['period_time_total'] += 1
-    if settingData['period_time_total'] == (int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60)/2:
-        settingData['half'] = 2
-        socketio.emit('time', {'time': total_second})
-    else:
-        socketio.emit('time', {'time': total_second})
+    # if settingData['period_time_total'] == (int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60)/2:
+    #     settingData['half'] = 2
+    #     socketio.emit('time', {'time': total_second})
+    # else:
+    socketio.emit('time', {'time': total_second})
     socketio.emit('settings', settingData)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=2323)
