@@ -85,11 +85,9 @@ def control():
     if action == "half_plus":
         if settingData['half'] < 2:
             settingData['half'] += 1
-            settingData['period_time_total'] = (int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60)/2
     if action == "half_minus":
         if settingData['half'] > 1:
             settingData['half'] -= 1
-            settingData['period_time_total'] = 0
     if action == "game-name-color-box":
         settingData['gamename_color'] = request.args.get('data')
     if action == "home-team-color-box":
@@ -113,13 +111,13 @@ def control():
     if action == "updatePeriodHours":
         if request.args.get('data') != "":
             settingData['period_time_minute'] = request.args.get('data')
-        settingData['period_time_total'] = int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60
-        socketio.emit('time', {'time': settingData['period_time_total']})
+        # settingData['period_time_total'] = int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60
+        # socketio.emit('time', {'time': settingData['period_time_total']})
     if action == "updatePeriodMinutes":
         if request.args.get('data') != "":
             settingData['period_time_second'] = request.args.get('data')
-        settingData['period_time_total'] = int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60
-        socketio.emit('time', {'time': settingData['period_time_total']})
+        # settingData['period_time_total'] = int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60
+        # socketio.emit('time', {'time': settingData['period_time_total']})
     socketio.emit('settings', settingData)
     print(action, "action")
     return jsonify({'action': action})
@@ -192,26 +190,26 @@ def savePeriodTime():
     data = request.json
     settingData['period_time_minute'] = data["minute"]
     settingData['period_time_second'] = data["second"]
-    settingData['period_time_total'] = int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60
+    settingData['period_time_total'] = 0
     socketio.emit('time', {'time': settingData['period_time_total']})
     socketio.emit('settings', settingData)
     return jsonify({'message': 'Saved successfully!'})
 def run_timer():
     global settingData
-    while settingData['period_time_start_stop'] and settingData['period_time_total'] > 0:
+    while settingData['period_time_start_stop']> 0:
         send_time()
         time.sleep(1)
 
 def send_time():
     global settingData
     total_second = settingData['period_time_total']
-    if total_second > 0:
-        settingData['period_time_total'] -= 1
-        if settingData['period_time_total'] == (int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60)/2:
-            settingData['half'] = 2
-        socketio.emit('time', {'time': total_second})  # Send time to frontend
-    else:
-        settingData['period_time_start_stop'] = False  # Stop when it reaches 0
+    # if total_second > 0:
+    settingData['period_time_total'] += 1
+    # if settingData['period_time_total'] == (int(settingData['period_time_second']) + int(settingData['period_time_minute']) * 60)/2:
+    #     settingData['half'] = 2
+    socketio.emit('time', {'time': total_second})  # Send time to frontend
+    # else:
+    #     settingData['period_time_start_stop'] = False  # Stop when it reaches 0
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=2323)
