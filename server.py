@@ -90,6 +90,7 @@ def control():
     if action == "half_minus":
         if settingData['half'] > 1:
             settingData['half'] -= 1
+            settingData['period_time_total'] = 0
             socketio.emit('time', {'time': 0})
     if action == "game-name-color-box":
         settingData['gamename_color'] = request.args.get('data')
