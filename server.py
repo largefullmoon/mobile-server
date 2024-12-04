@@ -87,6 +87,9 @@ def control():
             settingData['half'] += 1
             settingData['period_time_total'] = 0
             socketio.emit('time', {'time': 0})
+    if action == "reset_clockbutton":
+        settingData['period_time_total'] = 0
+        socketio.emit('time', {'time': 0})
     if action == "half_minus":
         if settingData['half'] > 1:
             settingData['half'] -= 1
