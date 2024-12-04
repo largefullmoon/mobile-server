@@ -88,6 +88,8 @@ def control():
             settingData['period_time_total'] = 0
             socketio.emit('time', {'time': 0})
     if action == "reset_clockbutton":
+        if settingData['half'] < 2:
+            settingData['half'] += 1
         settingData['period_time_total'] = 0
         socketio.emit('time', {'time': 0})
     if action == "half_minus":
@@ -116,20 +118,19 @@ def control():
         if request.args.get('data') != "":
             settingData['home_team_name'] = request.args.get('data')
     if action == "updateGameName":
-        if request.args.get('data') != "":
-            settingData['game_name'] = request.args.get('data')
-            settingData["home_team_score"] = 0
-            settingData["visitor_team_score"] = 0
-            settingData["home_team_score_2"] = 0
-            settingData["visitor_team_score_2"] = 0
-            settingData["totalscore_hometeam"] = 0
-            settingData["totalscore_visitorteam"] = 0
-            settingData["period_time_start_stop"] = False
-            settingData["half"] = 1
-            settingData["running_time"] = 0
-            settingData["period_time_minute"] = 0
-            settingData["period_time_second"] = 0
-            settingData["period_time_total"] = 0
+        settingData['game_name'] = request.args.get('data')
+        settingData["home_team_score"] = 0
+        settingData["visitor_team_score"] = 0
+        settingData["home_team_score_2"] = 0
+        settingData["visitor_team_score_2"] = 0
+        settingData["totalscore_hometeam"] = 0
+        settingData["totalscore_visitorteam"] = 0
+        settingData["period_time_start_stop"] = False
+        settingData["half"] = 1
+        settingData["running_time"] = 0
+        settingData["period_time_minute"] = 0
+        settingData["period_time_second"] = 0
+        settingData["period_time_total"] = 0
     if action == "updatePeriodHours":
         if request.args.get('data') != "":
             settingData['period_time_minute'] = request.args.get('data')
